@@ -1,0 +1,18 @@
+{
+	"name": "gFont Replace",
+	"version": "0.2.1",
+	"download_url": "https://github.com/KevinTaron/gw-gfont-replacer/raw/master/gw-gfont-replacer.zip",
+
+	"homepage": "http://gutwerker.de",
+	"requires": "4.5",
+	"tested": "4.8",
+	"last_updated": "2017-01-01 16:17:00",
+	"upgrade_notice": "Here's why you should upgrade...",
+
+	"author": "Kevin Taron",
+	"author_homepage": "http://gutwerker.de",
+
+	"sections": {
+		"description": "Replace all Google Fonts on your website with local fonts. Plugin downloads and serve the fonts from your server.",
+	}
+}

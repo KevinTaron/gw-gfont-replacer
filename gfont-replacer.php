@@ -3,7 +3,7 @@
  Plugin Name: gFont Replace
  Plugin URI: https://gutwerker.de/
  Description: Replace all Google Fonts on your website with local fonts. Plugin downloads and serve the fonts from your server.  
- Version: 0.3.5
+ Version: 0.3.6
  Author: Kevin Taron
  Author URI: https://gutwerker.de
  Text Domain: gw-gfont-replacer
@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ! defined( 'ABSPATH' ) AND exit;
 
 // Version of the plugin
-define('GW_GFONT_REPLACER_CURRENT_VERSION', '0.3.5' );
+define('GW_GFONT_REPLACER_CURRENT_VERSION', '0.3.6' );
 
 
 require 'pluginupdater/plugin-update-checker.php';
@@ -57,9 +57,16 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 		}
 
 		public function __construct() {
+			add_action( 'wp_enqueue_scripts', array( $this, 'load_roboto' ) );
 			add_filter( 'style_loader_src', array( $this,'gfont_replacer_load_cssfiles'), 100000, 2 );	
 			add_action('wp_head', array( $this,'gw_gfont_replacer_start_wp_head_buffer'), 0);
 			add_action('wp_head', array( $this,'gw_gfont_replacer_end_wp_head_buffer'), PHP_INT_MAX);
+		}
+
+		function load_roboto() {
+			if (!is_admin() and !is_login_page()) {
+				wp_enqueue_style( 'roboto', '//fonts.googleapis.com/css?family=Roboto:300,400,500,700' );
+			}
 		}
 
 		function gw_gfont_replacer_start_wp_head_buffer() {

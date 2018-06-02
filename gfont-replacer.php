@@ -37,12 +37,10 @@ define('GW_GFONT_REPLACER_CURRENT_VERSION', '0.3' );
 
 require 'pluginupdater/plugin-update-checker.php';
 $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-	'https://github.com/KevinTaron/gw-gfont-replacer/raw/master/details.json',
+	'https://github.com/KevinTaron/gw-gfont-replacer',
 	__FILE__, //Full path to the main plugin file or functions.php.
 	'gw-gfont-replacer'
 );
-$myUpdateChecker->setBranch('master');
-
 
 if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 

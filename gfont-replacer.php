@@ -41,6 +41,7 @@ $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
 	__FILE__, //Full path to the main plugin file or functions.php.
 	'gw-gfont-replacer'
 );
+$myUpdateChecker->setBranch('master');
 
 
 if ( ! class_exists( 'gw_gefont_replacer' ) ) {

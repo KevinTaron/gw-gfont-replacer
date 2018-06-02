@@ -3,7 +3,7 @@
  Plugin Name: gFont Replace
  Plugin URI: https://gutwerker.de/
  Description: Replace all Google Fonts on your website with local fonts. Plugin downloads and serve the fonts from your server.  
- Version: 0.3.1
+ Version: 0.3.2
  Author: Kevin Taron
  Author URI: https://gutwerker.de
  Text Domain: gw-gfont-replacer
@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ! defined( 'ABSPATH' ) AND exit;
 
 // Version of the plugin
-define('GW_GFONT_REPLACER_CURRENT_VERSION', '0.3.1' );
+define('GW_GFONT_REPLACER_CURRENT_VERSION', '0.3.2' );
 
 
 require 'pluginupdater/plugin-update-checker.php';
@@ -117,6 +117,7 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 
 		function checkIfGoogleFontsInCss($src) {
 			$cssfile = file_get_contents($src);
+
 			if(preg_match("/fonts.googleapis.com/", $cssfile, $output)) {
 				return true;
 			} 
@@ -129,12 +130,18 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 			$localfile = plugin_dir_path( __FILE__ ) . "gfonts/css/" . $cssfilename; 
 			$file_exists = file_exists($localfile);
 
-			// if(!$file_exists) {
-			if(true) {
+			if(!$file_exists) {
 				$url = 'https:' . $url;
 				$url = str_replace('https:https://', 'https://', $url);
 				$url = str_replace('https:http://', 'https://', $url);
 				$cssfile = file_get_contents($url);
+
+				if(!$cssfile) {
+					$ch = curl_init();
+					curl_setopt($ch, CURLOPT_URL,$url);
+					$cssfile = curl_exec($ch);
+					curl_close($ch);
+				}
 
 				$replacefile = $this->download_allfonts($cssfile);
 
@@ -163,6 +170,14 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 
 		function download_single_font($gfonturl) {
 			$fontfile = file_get_contents($gfonturl);
+
+			if(!$fontfile) {
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL,$gfonturl);
+				$fontfile = curl_exec($ch);
+				curl_close($ch);
+			}
+
 			$localfile = preg_replace("/https:\/\/fonts.gstatic.com\/s\//", plugin_dir_path( __FILE__ ) . "gfonts/fonts/", $gfonturl);
 			$localfilename = preg_match("/[^\/]*$/", $localfile, $localfilenamearray);
 			$localfilname = $localfilenamearray[0];

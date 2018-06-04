@@ -64,9 +64,7 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 		}
 
 		function load_roboto() {
-			if (!is_admin() and !is_login_page()) {
-				wp_enqueue_style( 'roboto', '//fonts.googleapis.com/css?family=Roboto:300,400,500,700' );
-			}
+			wp_enqueue_style( 'roboto', '//fonts.googleapis.com/css?family=Roboto:300,400,500,700' );
 		}
 
 		function gw_gfont_replacer_start_wp_head_buffer() {

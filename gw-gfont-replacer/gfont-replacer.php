@@ -3,7 +3,7 @@
  Plugin Name: gFont Replace
  Plugin URI: https://gutwerker.de/
  Description: Replace all Google Fonts on your website with local fonts. Plugin downloads and serve the fonts from your server.  
- Version: 0.3.7
+ Version: 0.3.8
  Author: Kevin Taron
  Author URI: https://gutwerker.de
  Text Domain: gw-gfont-replacer
@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ! defined( 'ABSPATH' ) AND exit;
 
 // Version of the plugin
-define('GW_GFONT_REPLACER_CURRENT_VERSION', '0.3.7' );
+define('GW_GFONT_REPLACER_CURRENT_VERSION', '0.3.8' );
 
 
 require 'pluginupdater/plugin-update-checker.php';
@@ -59,6 +59,7 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 		public function __construct() {
 			add_action( 'wp_enqueue_scripts', array( $this, 'load_roboto' ) );
 			add_filter( 'style_loader_src', array( $this,'gfont_replacer_load_cssfiles'), 100000, 2 );	
+			add_filter( 'script_loader_src', array( $this,'gfont_replacer_load_srcfiles'), 100000, 2 );	
 			add_action('wp_head', array( $this,'gw_gfont_replacer_start_wp_head_buffer'), 0);
 			add_action('wp_head', array( $this,'gw_gfont_replacer_end_wp_head_buffer'), PHP_INT_MAX);
 		}
@@ -110,6 +111,15 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 			return $in;
 		}
 
+		function gfont_replacer_load_srcfiles( $src, $handle ) {
+			if ( ! preg_match("/ajax.googleapis.com/", $src, $output_array)) {
+				return $src;			
+			}
+			
+			$localurl = $this->download_js($src);
+			return $localurl;
+		}
+
 		function gfont_replacer_load_cssfiles( $src, $handle ) {
 			if ( ! preg_match("/fonts.googleapis.com/", $src, $output_array)) {
 				return $src;			
@@ -126,6 +136,32 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 				return true;
 			} 
 			return false;
+		}
+
+		function download_js($url) {
+			$cssfilename = $this->getJsName($url);
+			$localurl = plugins_url( '/gfonts/js/' . $cssfilename, __FILE__ );
+			$localfile = plugin_dir_path( __FILE__ ) . "gfonts/js/" . $cssfilename; 
+			$file_exists = file_exists($localfile);
+
+			if(!$file_exists) {
+				$url = 'https:' . $url;
+				$url = str_replace('https:https://', 'https://', $url);
+				$url = str_replace('https:http://', 'https://', $url);
+				$cssfile = wp_remote_retrieve_body(wp_remote_get($url));
+
+				if(!$cssfile) {
+					$cssfile = file_get_contents($url);
+				}
+
+				$replacefile = $this->download_allfonts($cssfile);
+
+				$fp = fopen($localfile, 'w');
+				fwrite($fp, $replacefile);
+				fclose($fp);
+			}
+
+			return $localurl;
 		}
 
 		function download_css($url) {
@@ -195,6 +231,11 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 		function getCSSfileName($url) {
 			$filelink = preg_match("/(family=)(.*)/", $url, $output_array);
 			return md5($output_array[2]) . '.css';
+		}
+
+		function getJsName($url) {
+			$file = basename($url);
+			return md5($url);
 		}
 
 

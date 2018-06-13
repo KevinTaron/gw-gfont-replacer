@@ -3,7 +3,7 @@
  Plugin Name: gFont Replace
  Plugin URI: https://gutwerker.de/
  Description: Replace all Google Fonts on your website with local fonts. Plugin downloads and serve the fonts from your server.  
- Version: 0.3.9
+ Version: 0.4.0
  Author: Kevin Taron
  Author URI: https://gutwerker.de
  Text Domain: gw-gfont-replacer
@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ! defined( 'ABSPATH' ) AND exit;
 
 // Version of the plugin
-define('GW_GFONT_REPLACER_CURRENT_VERSION', '0.3.9' );
+define('GW_GFONT_REPLACER_CURRENT_VERSION', '0.4.0' );
 
 
 require 'pluginupdater/plugin-update-checker.php';
@@ -235,7 +235,8 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 
 		function getJsName($url) {
 			$file = basename($url);
-			return md5($url);
+			return $file;
+			// return md5($url) . '.js';
 		}
 
 

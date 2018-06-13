@@ -3,7 +3,7 @@
  Plugin Name: gFont Replace
  Plugin URI: https://gutwerker.de/
  Description: Replace all Google Fonts on your website with local fonts. Plugin downloads and serve the fonts from your server.  
- Version: 0.4.0
+ Version: 0.4.1
  Author: Kevin Taron
  Author URI: https://gutwerker.de
  Text Domain: gw-gfont-replacer
@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ! defined( 'ABSPATH' ) AND exit;
 
 // Version of the plugin
-define('GW_GFONT_REPLACER_CURRENT_VERSION', '0.4.0' );
+define('GW_GFONT_REPLACER_CURRENT_VERSION', '0.4.1' );
 
 
 require 'pluginupdater/plugin-update-checker.php';
@@ -61,6 +61,7 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 			add_filter( 'style_loader_src', array( $this,'gfont_replacer_load_cssfiles'), 100000, 2 );	
 			add_filter( 'script_loader_src', array( $this,'gfont_replacer_load_srcfiles'), 100000, 2 );	
 			add_action('wp_head', array( $this,'gw_gfont_replacer_start_wp_head_buffer'), 0);
+			add_filter('autoptimize_filter_js_exclude',  array( $this,'sw_custom_js_override'),10,1);
 			add_action('wp_head', array( $this,'gw_gfont_replacer_end_wp_head_buffer'), PHP_INT_MAX);
 		}
 
@@ -98,6 +99,18 @@ if ( ! class_exists( 'gw_gefont_replacer' ) ) {
 
 
 		    echo $in;
+		}
+
+		
+
+		/**
+		 * JS optimization exclude strings, as configured in admin page.
+		 *
+		 * @param $exclude: comma-seperated list of exclude strings
+		 * @return: comma-seperated list of exclude strings
+		 */
+		function sw_custom_js_override($exclude) {
+			return $exclude.", jquery.min.js";
 		}
 
 
